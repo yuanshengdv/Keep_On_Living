@@ -1,22 +1,30 @@
 module DistantVoices::Keep_On_Living
   # 提肛函数
   def self.kegel_exercises
-    UI.messagebox("已经工作了30分钟呢，请开始提肛，提肛运动可以帮助预防痔疮等肛周疾病\n用力收缩前阴和肛门，稍微憋一会儿，然后放松，接着再往上提，一提一松，反复进行。")
+    random_index = rand(@jokes.length)
+    joke_txt = @jokes[random_index]
+    UI.messagebox("已经工作了30分钟呢，请开始提肛，提肛运动可以帮助预防痔疮等肛周疾病\n用力收缩前阴和肛门，稍微憋一会儿，然后放松，接着再往上提，一提一松，反复进行。\n\n#{joke_txt}")
   end
 
   # 站立函数
   def self.stand_up
-    UI.messagebox("已经很久没有站起来了，记得站起来活动一下腰颈哦，希望你能活到领养老金")
+    random_index = rand(@jokes.length)
+    joke_txt = @jokes[random_index]
+    UI.messagebox("已经很久没有站起来了，记得站起来活动一下腰颈哦，希望你能活到领养老金。\n\n#{joke_txt}")
   end
 
   # 喝水函数
   def self.drinking
-    UI.messagebox("你好像很久没喝水了呢，长期饮水不足可能增加泌尿系统结石的风险")
+    random_index = rand(@jokes.length)
+    joke_txt = @jokes[random_index]
+    UI.messagebox("你好像很久没喝水了呢，长期饮水不足可能增加泌尿系统结石的风险。\n\n#{joke_txt}")
   end
 
   # 休息函数
   def self.rest
-    UI.messagebox("活是公司的，命是自己的，请记得休息一下")
+    random_index = rand(@jokes.length)
+    joke_txt = @jokes[random_index]
+    UI.messagebox("活是公司的，命是自己的，请记得休息一下。\n\n#{joke_txt}")
   end
 
   # 后台监听程序
@@ -99,8 +107,52 @@ module DistantVoices::Keep_On_Living
     end
   end
 
-  unless file_loaded?(__FILE__)
-    start_background_listener
+  # 切换按钮背景色
+  def self.toggle_button_background
+    @button_state = !@button_state
+
+    if @button_state
+      start_background_listener unless @notifier
+    else
+      stop_background_listener
+    end
   end
 
+  unless file_loaded?(__FILE__)
+    @button_state ||= false
+    # 读取文件内容，移除空行和空白字符
+    jokes_file = File.join(File.dirname(__FILE__), "jokes.txt")
+    @jokes = File.readlines(jokes_file, chomp: true)
+    @jokes.reject!(&:empty?)
+    @toolbar = UI::Toolbar.new("活下去！")
+
+    # 创建切换按钮
+    @button = UI::Command.new("健康提示开关") {
+      toggle_button_background
+    }
+
+    # 开关图标
+    @button.small_icon = "ico/switch.png"
+    @button.large_icon = "ico/switch.png"
+    @button.tooltip = "点击开启或关闭健康提示"
+    @button.status_bar_text = "点击开启或关闭健康提示"
+
+    # 添加验证过程来控制选中状态和文本提示
+    @button.set_validation_proc {
+      # 根据状态设置选中标志和提示文本
+      if @button_state
+        # 开启状态
+        @button.status_bar_text = "健康提示已开启（点击关闭）"
+        MF_CHECKED    # 按钮显示为选中状态
+      else
+        # 关闭状态
+        @button.status_bar_text = "健康提示已关闭（点击开启）"
+        MF_UNCHECKED  # 按钮显示为未选中状态
+      end
+    }
+
+    @toolbar.add_item @button
+    @toolbar.show
+    file_loaded(__FILE__)
+  end
 end
