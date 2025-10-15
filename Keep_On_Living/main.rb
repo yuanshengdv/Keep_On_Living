@@ -11,5 +11,17 @@ module DistantVoices::Keep_On_Living
                   用力收缩前阴和肛门，稍微憋一会儿，然后放松，接着再往上提，一提一松，反复进行。")
   end
 
+  def stand_up
+    UI.messagebox("已经很久没有站起来了，记得站起来活动一下腰颈哦，希望你能活到领养老金")
+  end
+
+  def drinking
+    UI.messagebox("你好像很久没喝水了呢，长期饮水不足可能增加泌尿系统结石的风险")
+  end
+
+  def rest
+    UI.messagebox("工作是公司的，命是自己的，请记得休息一下，休息一下，休息一下")
+  end
+
 end
 
