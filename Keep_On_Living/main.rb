@@ -1,31 +1,4 @@
 module DistantVoices::Keep_On_Living
-  # 提肛函数
-  def self.kegel_exercises
-    random_index = rand(@jokes.length)
-    joke_txt = @jokes[random_index]
-    UI.messagebox("已经工作了30分钟呢，请开始提肛，提肛运动可以帮助预防痔疮等肛周疾病\n用力收缩前阴和肛门，稍微憋一会儿，然后放松，接着再往上提，一提一松，反复进行。\n\n#{joke_txt}")
-  end
-
-  # 站立函数
-  def self.stand_up
-    random_index = rand(@jokes.length)
-    joke_txt = @jokes[random_index]
-    UI.messagebox("已经很久没有站起来了，记得站起来活动一下腰颈哦，希望你能活到领养老金。\n\n#{joke_txt}")
-  end
-
-  # 喝水函数
-  def self.drinking
-    random_index = rand(@jokes.length)
-    joke_txt = @jokes[random_index]
-    UI.messagebox("你好像很久没喝水了呢，长期饮水不足可能增加泌尿系统结石的风险。\n\n#{joke_txt}")
-  end
-
-  # 休息函数
-  def self.rest
-    random_index = rand(@jokes.length)
-    joke_txt = @jokes[random_index]
-    UI.messagebox("活是公司的，命是自己的，请记得休息一下。\n\n#{joke_txt}")
-  end
 
   # 后台监听程序
   class BackgroundNotifier
@@ -62,40 +35,46 @@ module DistantVoices::Keep_On_Living
       elapsed_minutes = (current_time - @start_time) / 60
 
       # 按优先级检查提醒（优先时间长的）
-      # 每180分钟提醒休息
-      if elapsed_minutes >= 180 && elapsed_minutes - @last_reminders[:rest] >= 180
-        DistantVoices::Keep_On_Living.rest
+      if elapsed_minutes - @last_reminders[:rest] >= 180
+        UI.messagebox("活是公司的，命是自己的，请记得休息一下。")
         @last_reminders[:rest] = elapsed_minutes
         return
       end
 
-      # 每120分钟提醒喝水
-      if elapsed_minutes >= 120 && elapsed_minutes - @last_reminders[:drink] >= 120
-        DistantVoices::Keep_On_Living.drinking
+      if elapsed_minutes - @last_reminders[:drink] >= 120
+        UI.messagebox("你好像很久没喝水了呢，长期饮水不足可能增加泌尿系统结石的风险。")
         @last_reminders[:drink] = elapsed_minutes
         return
       end
 
-      # 每90分钟提醒站立
-      if elapsed_minutes >= 90 && elapsed_minutes - @last_reminders[:stand] >= 90
-        DistantVoices::Keep_On_Living.stand_up
+      if elapsed_minutes - @last_reminders[:stand] >= 90
+        UI.messagebox("已经很久没有站起来了，记得活动一下腰颈哦，希望你能活到领养老金。")
         @last_reminders[:stand] = elapsed_minutes
         return
       end
 
-      # 每30分钟提醒提肛
-      if elapsed_minutes >= 30 && elapsed_minutes - @last_reminders[:kegel] >= 30
-        DistantVoices::Keep_On_Living.kegel_exercises
+      if elapsed_minutes - @last_reminders[:kegel] >= 30
+        UI.messagebox("已经工作了30分钟呢，请开始提肛，提肛运动可以帮助预防痔疮等肛周疾病\n用力收缩前阴和肛门，稍微憋一会儿，然后放松，接着再往上提，一提一松，反复进行。")
         @last_reminders[:kegel] = elapsed_minutes
       end
     end
   end
 
+  #来点笑话
+  def self.jokes
+    random_index = rand(@jokes.length)
+    joke_txt = @jokes[random_index]
+  end
+
   # 启动后台监听程序
   def self.start_background_listener
-    if !@notifier || @notifier.nil?
+    # 防止重复启动
+    return if @notifier
+
+    unless @notifier
       @notifier = BackgroundNotifier.new
       @notifier.start
+      SKETCHUP_CONSOLE.puts "健康监听程序已启动" if defined?(SKETCHUP_CONSOLE)
     end
   end
 
