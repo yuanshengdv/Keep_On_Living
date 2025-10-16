@@ -44,22 +44,22 @@
 <body>
     <div class="joke-container">
         <div class="title">雨后小故事</div>
-        <div class="joke-content" id="jokeText"></div>
+        <div class="joke-content" id="storietteText"></div>
     </div>
 
     <script>
-        // 页面加载完成后从URL参数获取笑话文本
+        // 页面加载完成后从URL参数获取小故事文本
         document.addEventListener('DOMContentLoaded', function() {
-            // 获取URL参数中的笑话文本
+            // 获取URL参数中的小故事文本
             const urlParams = new URLSearchParams(window.location.search);
-            const jokeText = urlParams.get('joke');
+            const storietteText = urlParams.get('storiette');
 
-            if (jokeText) {
-                // 解码并显示笑话文本
-                let decodedJoke = decodeURIComponent(jokeText);
+            if (storietteText) {
+                // 解码并显示小故事文本
+                let decodedStoriette = decodeURIComponent(storietteText);
                 // 将 \n 字符串替换为实际的换行符
-                decodedJoke = decodedJoke.replace(/\\n/g, '\n');
-                document.getElementById('jokeText').textContent = decodedJoke;
+                decodedStoriette = decodedStoriette.replace(/\\n/g, '\n');
+                document.getElementById('storietteText').textContent = decodedStoriette;
             }
         });
     </script>

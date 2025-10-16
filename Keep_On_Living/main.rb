@@ -129,7 +129,7 @@ module DistantVoices::Keep_On_Living
     full_url = "file:///#{joke_html_path}?joke=#{encoded_joke}"
 
     joke_html = UI::HtmlDialog.new({
-      dialog_title: "人生哲理", # 清空标题
+      dialog_title: "人生哲理",
       preferences_key: "com.DistantVoices.keep_on_living.joke",
       scrollable: false,
       width: 450,
@@ -141,6 +141,29 @@ module DistantVoices::Keep_On_Living
     joke_html.set_url(full_url)
     joke_html.show
 
+  end
+
+  # 雨后小故事
+  def self.storiette_windows
+    storiette = @storiette_text.first
+
+    # 将雨后小故事文本作为URL参数传递
+    storiette_html_path = File.join(__dir__, 'html', "storiette.html")
+    encoded_storiette = URI.encode_www_form_component(storiette)
+    full_url = "file:///#{storiette_html_path}?storiette=#{encoded_storiette}"
+
+    storiette_html = UI::HtmlDialog.new({
+      dialog_title: "雨后小故事",
+      preferences_key: "com.DistantVoices.keep_on_living.storiette",
+      scrollable: false,
+      width: 450,
+      height: 400,
+      style: UI::HtmlDialog::STYLE_DIALOG
+    })
+
+    # 显示 HTML 页面
+    storiette_html.set_url(full_url)
+    storiette_html.show
   end
 
   # 启动后台监听程序
@@ -200,37 +223,59 @@ module DistantVoices::Keep_On_Living
     dlg.add_action_callback("openBilibili") do |action_context|
       UI.openURL("https://b23.tv/pO2xctz")
     end
+    dlg.add_action_callback("openGithub") do |action_context|
+      UI.openURL("https://github.com/yuanshengdv/Keep_On_Living")
+    end
     # 显示对话框
     dlg.show
   end
 
-  #更新一些笑话文本和用吐槽
+  # 更新笑话和雨后小故事文本
   def self.update
     jokes_file = File.join(File.dirname(__FILE__), "jokes.txt")
+    storiette_file = File.join(File.dirname(__FILE__), "storiette.txt")
     joke_github_url = "https://raw.githubusercontent.com/yuanshengdv/Keep_On_Living/main/Keep_On_Living/jokes.txt"
+    storiette_github_url = "https://raw.githubusercontent.com/yuanshengdv/Keep_On_Living/main/Keep_On_Living/storiette.txt"
 
+    # 更新 jokes.txt
     begin
-      # 尝试下载远程文件到临时文件，设置超时时间
       temp_file = File.join(File.dirname(__FILE__), "jokes_temp.txt")
       URI.open(joke_github_url,
                ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
-               read_timeout: 3,    # 读取超时3秒
-               open_timeout: 3) do |remote_file|  # 连接超时3秒
+               read_timeout: 3,
+               open_timeout: 3) do |remote_file|
         File.open(temp_file, 'wb') do |file|
           file.write(remote_file.read)
         end
       end
 
-      # 下载成功后替换原文件
       File.rename(temp_file, jokes_file)
-      puts "远程数据更新成功"
-
+      puts "笑话文本更新成功"
     rescue => e
-      # 下载失败，删除临时文件（如果存在）
       File.delete(temp_file) if File.exist?(temp_file)
-      puts "下载失败，使用本地文件: #{e.message}"
+      puts "笑话文本下载失败: #{e.message}"
+    end
+
+    # 更新 storiette.txt
+    begin
+      temp_file = File.join(File.dirname(__FILE__), "storiette_temp.txt")
+      URI.open(storiette_github_url,
+               ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
+               read_timeout: 3,
+               open_timeout: 3) do |remote_file|
+        File.open(temp_file, 'wb') do |file|
+          file.write(remote_file.read)
+        end
+      end
+
+      File.rename(temp_file, storiette_file)
+      puts "雨后小故事文本更新成功"
+    rescue => e
+      File.delete(temp_file) if File.exist?(temp_file)
+      puts "雨后小故事文本下载失败: #{e.message}"
     end
   end
+
 
   #小说阅读器
   def self.reader
@@ -245,10 +290,6 @@ module DistantVoices::Keep_On_Living
     })
     reader_html.set_url(reader_html_path)
     reader_html.show
-  end
-
-  def self.storiette_windows
-
   end
 
   unless file_loaded?(__FILE__)
@@ -296,7 +337,7 @@ module DistantVoices::Keep_On_Living
     cmd_jokes.tooltip = "来点人生哲理"
     cmd_jokes.status_bar_text = "来点人生哲理"
     toolbar.add_item cmd_jokes
-    #================================人生哲理================================
+    #================================雨后小故事================================
     storiette_file = File.join(File.dirname(__FILE__), "storiette.txt")
 
     # 读取文件内容，移除空行和空白字符
@@ -321,13 +362,13 @@ module DistantVoices::Keep_On_Living
     cmd_reader.status_bar_text = "小说阅读器"
     toolbar.add_item cmd_reader
     #================================更新 joke.txt===========================
-    cmd_update_joke = UI::Command.new("更新 joke.txt") {
+    cmd_update_joke = UI::Command.new("更新") {
       update
     }
     cmd_update_joke.small_icon = "ico/update_joke.png"
     cmd_update_joke.large_icon = "ico/update_joke.png"
-    cmd_update_joke.tooltip = "更新人生哲理"
-    cmd_update_joke.status_bar_text = "将人生哲理更新"
+    cmd_update_joke.tooltip = "更新人生哲理和雨后小故事"
+    cmd_update_joke.status_bar_text = "将人生哲理和雨后小故事更新"
     toolbar.add_item cmd_update_joke
     #================================关于界面================================
     cmd_about = UI::Command.new("关于界面") {
