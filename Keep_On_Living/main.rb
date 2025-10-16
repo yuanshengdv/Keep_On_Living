@@ -156,7 +156,7 @@ module DistantVoices::Keep_On_Living
       dialog_title: "雨后小故事",
       preferences_key: "com.DistantVoices.keep_on_living.storiette",
       scrollable: false,
-      width: 800,
+      width: 1200,
       height: 450,
       style: UI::HtmlDialog::STYLE_DIALOG
     })
