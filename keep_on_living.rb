@@ -17,7 +17,7 @@ module DistantVoices
 
     unless file_loaded?(__FILE__)
       ex = SketchupExtension.new('活下去！', 'Keep_On_Living/main')
-      ex.description = '设计行业的加班情况日益严重，希望通过这个工具来提醒你活下去'
+      ex.description = '设计行业的加班情况日益严重，希望通过这个工具来督促你活下去'
       ex.version     = "0.1.0"
       ex.copyright   = 'Copyright (c) 2025 DistantVoices.'
       ex.creator     = 'DistantVoices'

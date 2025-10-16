@@ -62,8 +62,7 @@ module DistantVoices::Keep_On_Living
 
   #来点笑话
   def self.jokes_windows
-    random_index = rand(@jokes_text.length)
-    joke = @jokes_text[random_index]
+    joke = @jokes_text.sample
 
     # 将笑话文本作为URL参数传递
     joke_html_path = File.join(__dir__, 'html', "joke.html")
@@ -71,13 +70,13 @@ module DistantVoices::Keep_On_Living
     full_url = "file:///#{joke_html_path}?joke=#{encoded_joke}"
 
     joke_html = UI::HtmlDialog.new({
-                                      dialog_title: "人生哲理",
-                                      preferences_key: "com.DistantVoices.keep_on_living.joke",
-                                      scrollable: false,
-                                      width: 450,
-                                      height: 400,
-                                      style: UI::HtmlDialog::STYLE_DIALOG
-                                    })
+      dialog_title: "人生哲理", # 清空标题
+      preferences_key: "com.DistantVoices.keep_on_living.joke",
+      scrollable: false,
+      width: 450,
+      height: 400,
+      style: UI::HtmlDialog::STYLE_DIALOG
+    })
 
     # 显示 HTML 页面
     joke_html.set_url(full_url)
@@ -102,6 +101,7 @@ module DistantVoices::Keep_On_Living
     if @notifier
       @notifier.stop
       @notifier = nil
+      puts "停止后台监听程序"
     end
   end
 
@@ -114,6 +114,35 @@ module DistantVoices::Keep_On_Living
     else
       stop_background_listener
     end
+  end
+
+    #关于界面
+  def self.about
+    # 创建一个新的 HTML 对话框
+    dlg = UI::HtmlDialog.new({
+                               :dialog_title    => '作者信息',
+                               :preferences_key => "com.DistantVoices.Keep_On_Living.about",
+                               :scrollable      => false,
+                               :resizable       => false,
+                               :width           => 420,
+                               :height          => 440,
+                               :style           => UI::HtmlDialog::STYLE_DIALOG
+                             })
+
+    # 设置 HTML 文件路径
+    dlg.set_file(File.join(__dir__, 'html', 'about.html'))
+    # 绑定按钮的点击事件回调
+    dlg.add_action_callback("onYes") do |action_context|
+      dlg.close
+    end
+    dlg.add_action_callback("onNo") do |action_context|
+      dlg.close
+    end
+    dlg.add_action_callback("openBilibili") do |action_context|
+      UI.openURL("https://b23.tv/pO2xctz")
+    end
+    # 显示对话框
+    dlg.show
   end
 
   unless file_loaded?(__FILE__)
@@ -153,14 +182,23 @@ module DistantVoices::Keep_On_Living
     @jokes_text = File.readlines(jokes_file, chomp: true)
     @jokes_text.reject!(&:empty?)
 
-    jokes = UI::Command.new("人生哲理") {
+    cmd_jokes = UI::Command.new("人生哲理") {
       jokes_windows
     }
-    jokes.small_icon = "ico/jokes.png"
-    jokes.large_icon = "ico/jokes.png"
-    jokes.tooltip = "来点人生哲理"
-    jokes.status_bar_text = "来点人生哲理"
-    toolbar.add_item jokes
+    cmd_jokes.small_icon = "ico/jokes.png"
+    cmd_jokes.large_icon = "ico/jokes.png"
+    cmd_jokes.tooltip = "来点人生哲理"
+    cmd_jokes.status_bar_text = "来点人生哲理"
+    toolbar.add_item cmd_jokes
+    #================================关于界面================================
+    cmd_about = UI::Command.new("关于界面") {
+      about
+    }
+    cmd_about.small_icon = "ico/about.png"
+    cmd_about.large_icon = "ico/about.png"
+    cmd_about.tooltip = "关于界面"
+    cmd_about.status_bar_text = "关于界面"
+    toolbar.add_item cmd_about
 
 
 

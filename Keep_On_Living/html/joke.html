@@ -56,7 +56,9 @@
 
             if (jokeText) {
                 // 解码并显示笑话文本
-                const decodedJoke = decodeURIComponent(jokeText);
+                let decodedJoke = decodeURIComponent(jokeText);
+                // 将 \n 字符串替换为实际的换行符
+                decodedJoke = decodedJoke.replace(/\\n/g, '\n');
                 document.getElementById('jokeText').textContent = decodedJoke;
             }
         });
