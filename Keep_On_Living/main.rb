@@ -247,6 +247,10 @@ module DistantVoices::Keep_On_Living
     reader_html.show
   end
 
+  def self.storiette_windows
+
+  end
+
   unless file_loaded?(__FILE__)
     toolbar = UI::Toolbar.new("活下去！")
     #================================提醒开关================================
@@ -292,6 +296,21 @@ module DistantVoices::Keep_On_Living
     cmd_jokes.tooltip = "来点人生哲理"
     cmd_jokes.status_bar_text = "来点人生哲理"
     toolbar.add_item cmd_jokes
+    #================================人生哲理================================
+    storiette_file = File.join(File.dirname(__FILE__), "storiette.txt")
+
+    # 读取文件内容，移除空行和空白字符
+    @storiette_text = File.readlines(storiette_file, chomp: true)
+    @storiette_text.reject!(&:empty?)
+
+    cmd_storiette = UI::Command.new("雨后小故事") {
+      storiette_windows
+    }
+    cmd_storiette.small_icon = "ico/storiette.png"
+    cmd_storiette.large_icon = "ico/storiette.png"
+    cmd_storiette.tooltip = "来听听别的设计师的雨后小故事吧"
+    cmd_storiette.status_bar_text = "来听听别的设计师的雨后小故事吧"
+    toolbar.add_item cmd_storiette
     #================================小说阅读器================================
     cmd_reader = UI::Command.new("小说阅读器") {
        reader
