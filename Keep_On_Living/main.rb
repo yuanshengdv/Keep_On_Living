@@ -113,7 +113,7 @@ module DistantVoices::Keep_On_Living
       end
 
       if elapsed_minutes - @last_reminders[:kegel] >= 30
-        UI.messagebox("已经工作了30分钟呢，请开始提肛，提肛运动可以帮助预防痔疮等肛周疾病\n用力收缩前阴和肛门，稍微憋一会儿，然后放松，接着再往上提，一提一松，反复进行。")
+        p
         @last_reminders[:kegel] = elapsed_minutes
       end
     end
@@ -304,7 +304,7 @@ module DistantVoices::Keep_On_Living
     @button.small_icon = "ico/switch.png"
     @button.large_icon = "ico/switch.png"
     @button.tooltip = "健康提示开关"
-    @button.status_bar_text = "点击开启或关闭健康提示"
+    @button.status_bar_text = "点击开启或关闭健康提示，每30分钟提醒你提肛，每90分钟提醒你站立，每120分钟提醒你喝水，每180分钟提醒你休息，6小时没干活就问问你死了没，死了给你联系火葬场"
 
     # 添加验证过程来控制选中状态和文本提示
     @button.set_validation_proc {
@@ -315,7 +315,7 @@ module DistantVoices::Keep_On_Living
         MF_CHECKED    # 按钮显示为选中状态
       else
         # 关闭状态
-        @button.status_bar_text = "健康提示已关闭（点击开启）"
+        @button.status_bar_text = "健康提示已关闭（点击开启），每30分钟提醒你提肛，每90分钟提醒你站立，每120分钟提醒你喝水，每180分钟提醒你休息，6小时没干活就问问你死了没，死了给你联系火葬场"
         MF_UNCHECKED  # 按钮显示为未选中状态
       end
     }
