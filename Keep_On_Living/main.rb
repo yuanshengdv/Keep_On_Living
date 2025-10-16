@@ -285,7 +285,7 @@ module DistantVoices::Keep_On_Living
       preferences_key: "com.DistantVoices.keep_on_living.reader",
       scrollable: false,
       width: 580,
-      height: 250,
+      height: 280,
       style: UI::HtmlDialog::STYLE_DIALOG
     })
     reader_html.set_url(reader_html_path)
