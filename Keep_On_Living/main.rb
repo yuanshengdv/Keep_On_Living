@@ -239,7 +239,7 @@ module DistantVoices::Keep_On_Living
       dialog_title: "参考资料", # 伪装标题
       preferences_key: "com.DistantVoices.keep_on_living.reader",
       scrollable: false,
-      width: 450,
+      width: 580,
       height: 250,
       style: UI::HtmlDialog::STYLE_DIALOG
     })
