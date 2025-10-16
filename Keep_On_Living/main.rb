@@ -232,6 +232,20 @@ module DistantVoices::Keep_On_Living
     end
   end
 
+  #小说阅读器
+  def self.reader
+    reader_html_path = File.join(__dir__, 'html', "reader.html")
+    reader_html = UI::HtmlDialog.new({
+      dialog_title: "参考资料", # 伪装标题
+      preferences_key: "com.DistantVoices.keep_on_living.reader",
+      scrollable: false,
+      width: 450,
+      height: 250,
+      style: UI::HtmlDialog::STYLE_DIALOG
+    })
+    reader_html.set_url(reader_html_path)
+    reader_html.show
+  end
 
   unless file_loaded?(__FILE__)
     toolbar = UI::Toolbar.new("活下去！")
@@ -278,7 +292,16 @@ module DistantVoices::Keep_On_Living
     cmd_jokes.tooltip = "来点人生哲理"
     cmd_jokes.status_bar_text = "来点人生哲理"
     toolbar.add_item cmd_jokes
-    #================================更新 joke.txt================================
+    #================================小说阅读器================================
+    cmd_reader = UI::Command.new("小说阅读器") {
+       reader
+    }
+    cmd_reader.small_icon = "ico/reader.png"
+    cmd_reader.large_icon = "ico/reader.png"
+    cmd_reader.tooltip = "小说阅读器"
+    cmd_reader.status_bar_text = "小说阅读器"
+    toolbar.add_item cmd_reader
+    #================================更新 joke.txt===========================
     cmd_update_joke = UI::Command.new("更新 joke.txt") {
       update
     }
