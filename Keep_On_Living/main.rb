@@ -1,3 +1,6 @@
+require 'open-uri'
+require 'openssl'
+
 module DistantVoices::Keep_On_Living
 
   # 模型修改监听程序
@@ -201,6 +204,30 @@ module DistantVoices::Keep_On_Living
     dlg.show
   end
 
+  #更新一些笑话文本和用吐槽
+  def self.update
+    jokes_file = File.join(File.dirname(__FILE__), "jokes.txt")
+    joke_github_url = "https://raw.githubusercontent.com/yuanshengdv/Keep_On_Living/main/Keep_On_Living/jokes.txt"
+    begin
+      # 尝试下载远程文件到临时文件
+      temp_file = File.join(File.dirname(__FILE__), "jokes_temp.txt")
+      URI.open(joke_github_url, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE) do |remote_file|
+        File.open(temp_file, 'wb') do |file|
+          file.write(remote_file.read)
+        end
+      end
+
+      # 下载成功后替换原文件
+      File.rename(temp_file, jokes_file)
+      puts "远程笑话更新成功"
+
+    rescue => e
+      # 下载失败，删除临时文件（如果存在）
+      File.delete(temp_file) if File.exist?(temp_file)
+      puts "下载失败，使用本地文件: #{e.message}"
+    end
+  end
+
   unless file_loaded?(__FILE__)
     toolbar = UI::Toolbar.new("活下去！")
     #================================提醒开关================================
@@ -232,9 +259,9 @@ module DistantVoices::Keep_On_Living
 
     toolbar.add_item @button
     #================================人生哲理================================
-    # 读取文件内容，移除空行和空白字符
     jokes_file = File.join(File.dirname(__FILE__), "jokes.txt")
-    #读取笑话文本
+
+    # 读取文件内容，移除空行和空白字符
     @jokes_text = File.readlines(jokes_file, chomp: true)
     @jokes_text.reject!(&:empty?)
 
@@ -246,6 +273,10 @@ module DistantVoices::Keep_On_Living
     cmd_jokes.tooltip = "来点人生哲理"
     cmd_jokes.status_bar_text = "来点人生哲理"
     toolbar.add_item cmd_jokes
+    #================================更新 joke.txt================================
+    cmd_update = UI::Command.new("更新 joke.txt") {
+      update
+    }
     #================================关于界面================================
     cmd_about = UI::Command.new("关于界面") {
       about
@@ -262,5 +293,5 @@ module DistantVoices::Keep_On_Living
 
 end
 
-# 直接调用死亡提醒
+# 直接调用死亡提醒，测试用
 # DistantVoices::Keep_On_Living.instance_variable_get(:@notifier).death_notice(10)
