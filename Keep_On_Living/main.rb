@@ -200,10 +200,6 @@ module DistantVoices::Keep_On_Living
     cmd_about.status_bar_text = "关于界面"
     toolbar.add_item cmd_about
 
-
-
-
-
     toolbar.show
     file_loaded(__FILE__)
   end
