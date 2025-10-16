@@ -208,10 +208,14 @@ module DistantVoices::Keep_On_Living
   def self.update
     jokes_file = File.join(File.dirname(__FILE__), "jokes.txt")
     joke_github_url = "https://raw.githubusercontent.com/yuanshengdv/Keep_On_Living/main/Keep_On_Living/jokes.txt"
+
     begin
-      # 尝试下载远程文件到临时文件
+      # 尝试下载远程文件到临时文件，设置超时时间
       temp_file = File.join(File.dirname(__FILE__), "jokes_temp.txt")
-      URI.open(joke_github_url, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE) do |remote_file|
+      URI.open(joke_github_url,
+               ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
+               read_timeout: 3,    # 读取超时3秒
+               open_timeout: 3) do |remote_file|  # 连接超时3秒
         File.open(temp_file, 'wb') do |file|
           file.write(remote_file.read)
         end
@@ -219,7 +223,7 @@ module DistantVoices::Keep_On_Living
 
       # 下载成功后替换原文件
       File.rename(temp_file, jokes_file)
-      puts "远程笑话更新成功"
+      puts "远程数据更新成功"
 
     rescue => e
       # 下载失败，删除临时文件（如果存在）
@@ -227,6 +231,7 @@ module DistantVoices::Keep_On_Living
       puts "下载失败，使用本地文件: #{e.message}"
     end
   end
+
 
   unless file_loaded?(__FILE__)
     toolbar = UI::Toolbar.new("活下去！")
@@ -274,9 +279,14 @@ module DistantVoices::Keep_On_Living
     cmd_jokes.status_bar_text = "来点人生哲理"
     toolbar.add_item cmd_jokes
     #================================更新 joke.txt================================
-    cmd_update = UI::Command.new("更新 joke.txt") {
+    cmd_update_joke = UI::Command.new("更新 joke.txt") {
       update
     }
+    cmd_update_joke.small_icon = "ico/update_joke.png"
+    cmd_update_joke.large_icon = "ico/update_joke.png"
+    cmd_update_joke.tooltip = "更新人生哲理"
+    cmd_update_joke.status_bar_text = "将人生哲理更新"
+    toolbar.add_item cmd_update_joke
     #================================关于界面================================
     cmd_about = UI::Command.new("关于界面") {
       about
