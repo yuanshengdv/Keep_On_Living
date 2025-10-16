@@ -157,7 +157,7 @@ module DistantVoices::Keep_On_Living
       preferences_key: "com.DistantVoices.keep_on_living.storiette",
       scrollable: false,
       width: 450,
-      height: 400,
+      height: 450,
       style: UI::HtmlDialog::STYLE_DIALOG
     })
 
@@ -207,7 +207,7 @@ module DistantVoices::Keep_On_Living
                                :scrollable      => false,
                                :resizable       => false,
                                :width           => 420,
-                               :height          => 440,
+                               :height          => 480,
                                :style           => UI::HtmlDialog::STYLE_DIALOG
                              })
 
@@ -276,7 +276,6 @@ module DistantVoices::Keep_On_Living
     end
   end
 
-
   #小说阅读器
   def self.reader
     reader_html_path = File.join(__dir__, 'html', "reader.html")
@@ -285,7 +284,7 @@ module DistantVoices::Keep_On_Living
       preferences_key: "com.DistantVoices.keep_on_living.reader",
       scrollable: false,
       width: 580,
-      height: 280,
+      height: 250,
       style: UI::HtmlDialog::STYLE_DIALOG
     })
     reader_html.set_url(reader_html_path)
