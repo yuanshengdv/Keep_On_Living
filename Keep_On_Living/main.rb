@@ -61,9 +61,28 @@ module DistantVoices::Keep_On_Living
   end
 
   #来点笑话
-  def self.jokes
-    random_index = rand(@jokes.length)
-    joke_txt = @jokes[random_index]
+  def self.jokes_windows
+    random_index = rand(@jokes_text.length)
+    joke = @jokes_text[random_index]
+
+    # 将笑话文本作为URL参数传递
+    joke_html_path = File.join(__dir__, 'html', "joke.html")
+    encoded_joke = URI.encode_www_form_component(joke)
+    full_url = "file:///#{joke_html_path}?joke=#{encoded_joke}"
+
+    joke_html = UI::HtmlDialog.new({
+                                      dialog_title: "人生哲理",
+                                      preferences_key: "com.DistantVoices.keep_on_living.joke",
+                                      scrollable: false,
+                                      width: 450,
+                                      height: 400,
+                                      style: UI::HtmlDialog::STYLE_DIALOG
+                                    })
+
+    # 显示 HTML 页面
+    joke_html.set_url(full_url)
+    joke_html.show
+
   end
 
   # 启动后台监听程序
@@ -74,7 +93,7 @@ module DistantVoices::Keep_On_Living
     unless @notifier
       @notifier = BackgroundNotifier.new
       @notifier.start
-      SKETCHUP_CONSOLE.puts "健康监听程序已启动" if defined?(SKETCHUP_CONSOLE)
+      puts "启动后台监听程序"
     end
   end
 
@@ -98,13 +117,9 @@ module DistantVoices::Keep_On_Living
   end
 
   unless file_loaded?(__FILE__)
+    toolbar = UI::Toolbar.new("活下去！")
+    #================================提醒开关================================
     @button_state ||= false
-    # 读取文件内容，移除空行和空白字符
-    jokes_file = File.join(File.dirname(__FILE__), "jokes.txt")
-    @jokes = File.readlines(jokes_file, chomp: true)
-    @jokes.reject!(&:empty?)
-    @toolbar = UI::Toolbar.new("活下去！")
-
     # 创建切换按钮
     @button = UI::Command.new("健康提示开关") {
       toggle_button_background
@@ -113,7 +128,7 @@ module DistantVoices::Keep_On_Living
     # 开关图标
     @button.small_icon = "ico/switch.png"
     @button.large_icon = "ico/switch.png"
-    @button.tooltip = "点击开启或关闭健康提示"
+    @button.tooltip = "健康提示开关"
     @button.status_bar_text = "点击开启或关闭健康提示"
 
     # 添加验证过程来控制选中状态和文本提示
@@ -130,8 +145,29 @@ module DistantVoices::Keep_On_Living
       end
     }
 
-    @toolbar.add_item @button
-    @toolbar.show
+    toolbar.add_item @button
+    #================================人生哲理================================
+    # 读取文件内容，移除空行和空白字符
+    jokes_file = File.join(File.dirname(__FILE__), "jokes.txt")
+    #读取笑话文本
+    @jokes_text = File.readlines(jokes_file, chomp: true)
+    @jokes_text.reject!(&:empty?)
+
+    jokes = UI::Command.new("人生哲理") {
+      jokes_windows
+    }
+    jokes.small_icon = "ico/jokes.png"
+    jokes.large_icon = "ico/jokes.png"
+    jokes.tooltip = "来点人生哲理"
+    jokes.status_bar_text = "来点人生哲理"
+    toolbar.add_item jokes
+
+
+
+
+
+    toolbar.show
     file_loaded(__FILE__)
   end
+
 end
