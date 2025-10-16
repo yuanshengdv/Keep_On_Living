@@ -1,5 +1,18 @@
 module DistantVoices::Keep_On_Living
 
+  # 模型修改监听程序
+  class ModelChangeObserver < Sketchup::ModelObserver
+    def initialize(notifier)
+      @notifier = notifier
+      # puts "模型修改监听程序已启动"
+    end
+
+    # 当模型修改时触发
+    def onChangeEntity(model, entity)
+      @notifier.record_model_change
+    end
+  end
+
   # 后台监听程序
   class BackgroundNotifier
     def initialize
@@ -8,9 +21,20 @@ module DistantVoices::Keep_On_Living
         kegel: 0,
         stand: 0,
         drink: 0,
-        rest: 0
+        rest: 0,
+        model_change: 0   # 记录模型最后一次修改时间
       }
       @timer_id = nil
+      # 注册模型观察者
+      model = Sketchup.active_model
+      @model_observer = ModelChangeObserver.new(self)
+      model.add_observer(@model_observer)
+    end
+
+    # 记录模型修改时间
+    def record_model_change
+      current_minutes = ((Time.now.to_i - @start_time) / 60).floor
+      @last_reminders[:model_change] = current_minutes
     end
 
     # 开始监听
@@ -29,10 +53,42 @@ module DistantVoices::Keep_On_Living
       end
     end
 
+    # 死亡提示界面
+    def death_notice(elapsed_minutes)
+      death_notice = UI::HtmlDialog.new({
+          dialog_title: "生命检测",
+          preferences_key: "com.DistantVoices.keep_on_living.death",
+          scrollable: true,
+          style: UI::HtmlDialog::STYLE_DIALOG,
+          width: 600,
+          height: 700,
+          resizable: false
+        })
+
+        death_notice.set_file(File.join(__dir__, 'html', 'death.html'))
+        death_notice.show
+
+        death_notice.add_action_callback("living") do |action_context|
+          death_notice.close
+          @last_reminders[:model_change] = elapsed_minutes  #还没死，重置计时器
+        end
+
+        death_notice.add_action_callback("dead") do |action_context|
+          death_notice.close
+          # @last_reminders[:model_change] = elapsed_minutes  #人已经死了，就不用每隔6小时提醒一次了
+        end
+    end
+
     # 检查并提醒
     def check_and_notify
       current_time = Time.new.to_i
-      elapsed_minutes = (current_time - @start_time) / 60
+      elapsed_minutes = ((current_time - @start_time) / 60).floor
+
+      # 模型 6 小时未修改
+      if elapsed_minutes - @last_reminders[:model_change] >= 360 && elapsed_minutes - @last_reminders[:model_change] < 361
+        death_notice(elapsed_minutes)
+        return
+      end
 
       # 按优先级检查提醒（优先时间长的）
       if elapsed_minutes - @last_reminders[:rest] >= 180
@@ -74,7 +130,7 @@ module DistantVoices::Keep_On_Living
       preferences_key: "com.DistantVoices.keep_on_living.joke",
       scrollable: false,
       width: 450,
-      height: 400,
+      height: 250,
       style: UI::HtmlDialog::STYLE_DIALOG
     })
 
@@ -92,7 +148,7 @@ module DistantVoices::Keep_On_Living
     unless @notifier
       @notifier = BackgroundNotifier.new
       @notifier.start
-      puts "启动后台监听程序"
+      # puts "启动后台监听程序"
     end
   end
 
@@ -101,7 +157,7 @@ module DistantVoices::Keep_On_Living
     if @notifier
       @notifier.stop
       @notifier = nil
-      puts "停止后台监听程序"
+      # puts "停止后台监听程序"
     end
   end
 
@@ -205,3 +261,6 @@ module DistantVoices::Keep_On_Living
   end
 
 end
+
+# 直接调用死亡提醒
+# DistantVoices::Keep_On_Living.instance_variable_get(:@notifier).death_notice(10)

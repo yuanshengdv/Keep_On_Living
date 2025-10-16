@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>长时间未操作提醒</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #ff4757 0%, #ff6b6b 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* 隐藏滚动条 */
+        }
+
+        .container {
+            background: transparent;
+            border-radius: 0;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .warning-icon {
+            font-size: 60px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .title {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .message {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #ffffff;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .tips {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tips-title {
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .tips-content {
+            font-size: 16px;
+            color: #ffffff;
+            text-align: left;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .tip-item {
+            margin-bottom: 8px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: 2px solid #ffffff;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            color: #ffffff;
+        }
+
+        .btn-continue {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-rest {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="warning-icon">⚠️</div>
+        <div class="title">长时间未操作提醒</div>
+        <div class="message">
+            你已经6个小时没修改这个模型了，好像 <span style="font-size: 25px; font-weight: bold; color: #ffffff; text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000;">有一点死了！</span><br>
+            需要我帮你联系医院和火葬场吗？<br>
+            如果是加班猝死的，我还可以帮你联系法律援助哦
+        </div>
+
+        <div class="tips">
+            <div class="tips-title">💡 健康小贴士</div>
+            <div class="tips-content">
+                <div class="tip-item">• 长时间工作容易导致颈椎病、腰椎病</div>
+                <div class="tip-item">• 久坐不动会增加心血管疾病风险</div>
+                <div class="tip-item">• 适当休息能提高工作效率</div>
+                <div class="tip-item">• 保持良好的工作生活平衡</div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-continue" onclick="continueWork()">还活着</button>
+            <button class="btn btn-rest" onclick="takeRest()">联系火葬场</button>
+        </div>
+    </div>
+
+    <script>
+        function continueWork() {
+            // 还活着,重置计时器
+            window.location.href = 'skp:living';
+        }
+
+        function takeRest() {
+            // 联系火葬场
+            // 联系个屁啊，人都死了，你怎么点的按钮？
+            window.location.href = 'skp:dead';
+        }
+
+        // 页面加载完成后自动聚焦
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可以添加其他初始化逻辑
+        });
+    </script>
+</body>
+</html>
