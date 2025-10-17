@@ -95,26 +95,26 @@ module DistantVoices::Keep_On_Living
 
       # 按优先级检查提醒（优先时间长的）
       if elapsed_minutes - @last_reminders[:rest] >= 180
-        UI.messagebox("活是公司的，命是自己的，请记得休息一下。")
         @last_reminders[:rest] = elapsed_minutes
+        UI.messagebox("活是公司的，命是自己的，请记得休息一下。")
         return
       end
 
       if elapsed_minutes - @last_reminders[:drink] >= 120
-        UI.messagebox("你好像很久没喝水了呢，长期饮水不足可能增加泌尿系统结石的风险。")
         @last_reminders[:drink] = elapsed_minutes
+        UI.messagebox("你好像很久没喝水了呢，长期饮水不足可能增加泌尿系统结石的风险。")
         return
       end
 
       if elapsed_minutes - @last_reminders[:stand] >= 90
-        UI.messagebox("已经很久没有站起来了，记得活动一下腰颈哦，希望你能活到领养老金。")
         @last_reminders[:stand] = elapsed_minutes
+        UI.messagebox("已经很久没有站起来了，记得活动一下腰颈哦，希望你能活到领养老金。")
         return
       end
 
       if elapsed_minutes - @last_reminders[:kegel] >= 30
-        UI.messagebox("已经工作了30分钟呢，请开始提肛，提肛运动可以帮助预防痔疮等肛周疾病。用力收缩前阴和肛门，稍微憋一会儿，然后放松，接着再往上提，一提一松，反复进行。")
         @last_reminders[:kegel] = elapsed_minutes
+        UI.messagebox("已经工作了30分钟呢，请开始提肛，提肛运动可以帮助预防痔疮等肛周疾病。用力收缩前阴和肛门，稍微憋一会儿，然后放松，接着再往上提，一提一松，反复进行。")
         return
       end
     end
