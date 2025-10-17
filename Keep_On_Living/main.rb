@@ -113,7 +113,7 @@ module DistantVoices::Keep_On_Living
       end
 
       if elapsed_minutes - @last_reminders[:kegel] >= 30
-        p
+        UI.messagebox("已经工作了30分钟呢，请开始提肛，提肛运动可以帮助预防痔疮等肛周疾病。用力收缩前阴和肛门，稍微憋一会儿，然后放松，接着再往上提，一提一松，反复进行。")
         @last_reminders[:kegel] = elapsed_minutes
       end
     end
